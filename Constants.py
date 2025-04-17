@@ -1,0 +1,7 @@
+CONSTANTE = r'true|false'
+PROPOSICAO = r'[0-9][0-9a-z]*'
+ABREPAREN = r'\('
+FECHAPAREN = r'\)'
+OPERADORUNARIO = r'\\neg'
+OPERADORBINARIO = r'\\wedge|\\vee|\\rightarrow|\\leftrightarrow'
+WHITESPACE = r'[ \t\n]+'

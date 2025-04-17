@@ -1,0 +1,15 @@
+true
+false
+1a
+2xyz
+(\neg true)
+(\neg 1a)
+(\wedge true false)
+(\vee 1a 2b)
+(\rightarrow 1p 2q)
+(\leftrightarrow 3abc 4def)
+(\neg (\wedge 1a 2b))
+(\rightarrow (\neg 1p) (\vee 2q 3r))
+(\wedge (\neg 1a) (\leftrightarrow 2b (\neg 3c)))
+(\vee (\wedge 1x 2y) (\rightarrow 3z false))
+(\leftrightarrow (\neg (\wedge 1a 2b)) (\vee 3c (\neg 4d)))
