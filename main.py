@@ -1,21 +1,19 @@
 import os
-from Tokenizer import Tokenizer
+from FSM import FSM
 
 
 def ReadFile(path: str):
-    tokenizer = Tokenizer()
-
+    fsm = FSM()
     with open(path, 'r') as file:
         for line in file:
-            line = line.strip()
-            if line:
-                tokens = tokenizer.TokenExtractor(line)
-                print(f"File: {path}, Tokens: {tokens}")
+            fsm.send(line)
+
+    for token in fsm.token_list:
+        print("=>: ", token)
 
 
 if __name__ == "__main__":
     path = "./inputs/"
     files = os.listdir(path)
-
     for file in files:
         ReadFile(os.path.join(path, file))
