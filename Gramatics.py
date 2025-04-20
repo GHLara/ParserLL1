@@ -23,8 +23,8 @@ class Gramatics:
         self.terminals[name] = Production(sym)
         return self.terminals[name]
 
-    def NonTerminal(self, name: str) -> Production:
-        sym = Symbol(name, isTerminal=False)
+    def NonTerminal(self, name: str, isInitial=False) -> Production:
+        sym = Symbol(name, isTerminal=False, isInitial=isInitial)
         self.nonTerminals[name] = Production(sym)
         return self.nonTerminals[name]
 
@@ -69,7 +69,7 @@ class Gramatics:
 
         # self.showTerminals()
 
-        self.NonTerminal('formula')
+        self.NonTerminal('formula', isInitial=True)
         self.NonTerminal('constant')
         self.NonTerminal('proposition')
         self.NonTerminal('unaryFormula')
