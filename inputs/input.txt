@@ -1,6 +1,6 @@
 true
 false
-1a
+1a$
 2xyz
-(\neg true)(\neg 1a)
+(\neg truf)(\neg 1a)
 (\wedge true false)

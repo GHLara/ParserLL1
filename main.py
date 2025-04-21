@@ -1,15 +1,12 @@
 import os
-from FSM import FSM
-from Finalstateteste import tokenize
+from Tokenizer import Tokenizer
+
 
 def ReadFile(path: str):
-    fsm = FSM()
+    tokenizer = Tokenizer()
     with open(path, 'r') as file:
-        for line in file:
-            print(tokenize(line))
-
-    for token in fsm.token_list:
-        print("=>: ", token)
+        for line_index, line in enumerate(file):
+            tokenizer.tokenize(line, line_index)
 
 
 if __name__ == "__main__":

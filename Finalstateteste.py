@@ -5,15 +5,48 @@ class State:
     OPEN_PARENTHESES = "OPEN_PARENTHESES"
     CLOSE_PARENTHESES = "CLOSE_PARENTHESES"
     CONSTANT = "CONSTANT"
+    LINEBREAK = "LINEBREAK"
     ERROR = "ERROR"
+    END = "END"
 
 
-string = '(\\neg (((true))))(\\neg 1a)'
+transition_table = {
+    "close_paren": State.CLOSE_PARENTHESES,
+    "open_paren":  State.OPEN_PARENTHESES,
+    "bool_start":  State.CONSTANT,
+    "whitespace":  State.LINEBREAK,
+    "backslash":   State.COMMAND,
+    "unknown":     State.ERROR,
+    "digit":       State.PROPOSITION,
+}
+
+
+def make_char_consumer(string):
+    iterator = iter(string)
+
+    def consumeChar():
+        try:
+            return next(iterator)
+        except StopIteration:
+            return None
+    return consumeChar
+
+
+string = r'''
+true
+false
+1a
+2xyz
+(\neg true)(\neg 1a)
+(\wedge true false)
+'''
 
 current_state = State.NEW_TOKEN
 next_state = State.NEW_TOKEN
 current_token = ""
-char = ""
+
+consumeChar = make_char_consumer(string)
+
 keywords = ["false", "true"]
 commands = ["\\neg", "\\wedge", "\\vee", "\\rightarrow", "\\leftrightarrow"]
 linebreak = [" ", "\n"]
@@ -29,17 +62,6 @@ def tokenFind():
     tokens.append(current_token)
     current_token = ""
     next_state = State.NEW_TOKEN
-
-
-def make_char_consumer(string):
-    iterator = iter(string)
-
-    def consumeChar():
-        try:
-            return next(iterator)
-        except StopIteration:
-            return None
-    return consumeChar
 
 
 def getCharType(char):
@@ -61,58 +83,29 @@ def getCharType(char):
         return "unknown"
 
 
-transition_table = {
-    "digit":        {"next_state": State.PROPOSITION},
-    "backslash":    {"next_state": State.COMMAND},
-    "open_paren":   {"next_state": State.OPEN_PARENTHESES},
-    "close_paren":  {"next_state": State.CLOSE_PARENTHESES},
-    "bool_start":   {"next_state": State.CONSTANT},
-    "whitespace":   {"next_state": State.NEW_TOKEN},
-    "unknown":      {"next_state": State.ERROR},
-}
-
-
 def getNextState(type_char):
-    transition = transition_table.get(type_char)
-    return transition.get("next_state")
+    return transition_table.get(type_char)
 
 
-consumeChar = make_char_consumer(string)
-
-while current_state != State.ERROR:
-
+while current_state != State.END:
     if current_state == State.NEW_TOKEN:
         char = consumeChar()
-        char_type = getCharType(char)
-        print(getNextState(char_type))
+
         if char is None:
+            current_state = State.END
             break
-        elif char.isdigit():
-            current_token += char
-            next_state = State.PROPOSITION
-        elif char == "\\":
-            current_token += char
-            next_state = State.COMMAND
-        elif char == "(":
-            current_token += char
-            next_state = State.OPEN_PARENTHESES
-        elif char == ")":
-            current_token += char
-            next_state = State.CLOSE_PARENTHESES
-        elif char == "t" or char == 'f':
-            current_token += char
-            next_state = State.CONSTANT
-        elif char in linebreak:
-            tokenFind()
-            next_state = State.NEW_TOKEN
-        else:
-            current_token += char
-            next_state = State.ERROR
+
+        char_type = getCharType(char)
+        current_token += char
+        next_state = getNextState(char_type)
 
     elif current_state == State.OPEN_PARENTHESES:
         tokenFind()
 
     elif current_state == State.CLOSE_PARENTHESES:
+        tokenFind()
+
+    elif current_state == State.LINEBREAK:
         tokenFind()
 
     elif current_state == State.CONSTANT:
@@ -169,12 +162,10 @@ while current_state != State.ERROR:
             next_state = State.ERROR
     current_state = next_state
 
-# if current_state in {State.PROPOSITION, State.COMMAND, State.CONSTANT,
-#                     State.OPEN_PARENTHESES, State.CLOSE_PARENTHESES} and current_token:
-#     tokens.append(current_token)
-
 if current_state == State.ERROR:
     print("Erro:", current_token)
 
 else:
+    print("Token Final:", current_token)
+    print("Estado Final:", current_state)
     print(tokens)
