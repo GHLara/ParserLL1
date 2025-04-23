@@ -1,10 +1,11 @@
 from Production import Production
 from Gramatics import Gramatics
+from constants import VAZIO, CIFRAO
 
 
 class Parser:
-    def __init__(self):
-        self.gramatic = Gramatics()
+    def __init__(self, gramatic: Gramatics):
+        self.gramatic = gramatic
 
     def defineFirst(self, initialProduction: Production):
         if len(initialProduction.productions) == 0:
@@ -36,19 +37,19 @@ class Parser:
 
         if len(production.first) > 0:
             return production.first
-
+        
         return self.defineFirst(production)
 
     def getFollow(self, symbolStr):
 
         production = self.gramatic.getProduction(symbolStr)
-        if(production == None):
+        if (production == None):
             print(f"Production rule not defined for {symbolStr}")
             return None
-        
-        if(production.symbol.isInitial):
+
+        if (production.symbol.isInitial):
             if len(production.follow) == 0:
-                production.follow.append('$')
+                production.follow.append(CIFRAO)
                 return self.defineFollow(production)
 
         if len(production.follow) > 0:
@@ -67,22 +68,20 @@ class Parser:
                     production_index += 1
 
                     if production.symbol.name == intial_production.symbol.name:
-                        
-                        if(production_index < len(rule)):
+
+                        if (production_index < len(rule)):
                             for follow_symbol in self.getFirst(rule[production_index].symbol.name):
-                                if(follow_symbol not in intial_production.follow):
-                                    intial_production.follow.append(follow_symbol)
+                                if (follow_symbol not in intial_production.follow):
+                                    intial_production.follow.append(
+                                        follow_symbol)
 
                         else:
                             for follow_symbol in self.getFollow(rules.symbol.name):
-                                if(follow_symbol not in intial_production.follow):
-                                    intial_production.follow.append(follow_symbol)
-        
+                                if (follow_symbol not in intial_production.follow):
+                                    intial_production.follow.append(
+                                        follow_symbol)
+
         print(intial_production.follow)
         return intial_production.follow
-
-parser = Parser()
-parser.getFollow('openParenteses')
-
 
 

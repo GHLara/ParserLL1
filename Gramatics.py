@@ -4,19 +4,10 @@ from typing import Dict
 
 
 class Gramatics:
-    _instance = None
-
-    # Código padrão para criar um singleton
-    def __new__(cls):
-        if cls._instance is None:
-            cls._instance = super(Gramatics, cls).__new__(cls)
-        return cls._instance
-
     def __init__(self):
         self.initial = None
         self.terminals: Dict[str, Production] = {}
         self.nonTerminals: Dict[str, Production] = {}
-        self.mount()
 
     def Terminal(self, name: str) -> Production:
         sym = Symbol(name, isTerminal=True)
@@ -45,97 +36,6 @@ class Gramatics:
         else:
             return None
 
-    def mount(self):
-
-        # Constantes
-        self.Terminal('true')
-        self.Terminal('false')
-
-        # Parenteses
-        self.Terminal('(')
-        self.Terminal(')')
-
-        # Unario
-        self.Terminal('neg')
-
-        # Binario
-        self.Terminal('wedge')
-        self.Terminal('vee')
-        self.Terminal('rightarrow')
-        self.Terminal('leftrightarrow')
-
-        # Proposicao
-        self.Terminal('propSymbol')
-
-        # self.showTerminals()
-
-        self.NonTerminal('formula', isInitial=True)
-        self.NonTerminal('constant')
-        self.NonTerminal('proposition')
-        self.NonTerminal('unaryFormula')
-        self.NonTerminal('binaryFormula')
-        self.NonTerminal('openParenteses')
-        self.NonTerminal('closeParenteses')
-        self.NonTerminal('unaryOperator')
-        self.NonTerminal('binaryOperator')
-
-        self.getProduction('openParenteses').addProduction(
-            [[self.terminals['(']]]
-        )
-        self.getProduction('closeParenteses').addProduction([
-            [self.terminals[')']]
-        ])
-
-        self.getProduction('unaryOperator').addProduction(
-            [[self.terminals['neg']]]
-        )
-        self.getProduction('binaryOperator').addProduction([
-            [self.terminals['wedge']],
-            [self.terminals['vee']],
-            [self.terminals['rightarrow']],
-            [self.terminals['leftrightarrow']]
-        ])
-        self.getProduction('constant').addProduction([
-            [self.terminals['true']],
-            [self.terminals['false']]
-        ])
-        self.getProduction('proposition').addProduction([
-            [self.terminals['propSymbol']]
-        ])
-
-        self.getProduction('formula').addProduction(
-            [
-                [self.nonTerminals['constant']],
-                [self.nonTerminals['proposition']],
-                [self.nonTerminals['unaryFormula']],
-                [self.nonTerminals['binaryFormula']]
-            ]
-        )
-
-        self.getProduction('unaryFormula').addProduction(
-            [
-                [
-                    self.nonTerminals['openParenteses'],
-                    self.nonTerminals['unaryOperator'],
-                    self.nonTerminals['formula'],
-                    self.nonTerminals['closeParenteses'],
-                ]
-            ]
-        )
-
-        self.getProduction('binaryFormula').addProduction(
-            [
-                [
-                    self.nonTerminals['openParenteses'],
-                    self.nonTerminals['binaryOperator'],
-                    self.nonTerminals['formula'],
-                    self.nonTerminals['formula'],
-                    self.nonTerminals['closeParenteses']
-                ]
-            ]
-        )
-
-        return self
 
 # gramatics.getNonTerminal('formula').showRules()
 # gramatics.getNonTerminal('constant').showRules()

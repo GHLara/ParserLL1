@@ -1,4 +1,4 @@
-from Token import Token
+from FSM.Token import Token
 
 
 class State:
@@ -153,7 +153,7 @@ class FiniteStateMachine:
 
                 type_char = self.getCharType(char)
 
-                if type_char == "alnum":
+                if type_char == "alnum" or type_char == 'digit':
                     self.current_token += char
                     self.next_state = State.PROPOSITION
                 elif type_char == 'close_paren':

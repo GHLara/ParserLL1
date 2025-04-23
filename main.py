@@ -1,5 +1,5 @@
 import os
-from Tokenizer import Tokenizer
+from FSM.Tokenizer import Tokenizer
 
 
 def ReadFile(path: str):
@@ -8,9 +8,18 @@ def ReadFile(path: str):
         for line_index, line in enumerate(file):
             tokenizer.tokenize(line, line_index)
 
+    return tokenizer.tokens
+
 
 if __name__ == "__main__":
     path = "./inputs/"
     files = os.listdir(path)
-    for file in files:
-        ReadFile(os.path.join(path, file))
+    for index, file in enumerate(files):
+        print(f"[{index}]" f" ({file})")
+
+    fileIndex = input("Arquivo: ")
+    findTokens = ReadFile(os.path.join(path, files[int(fileIndex)]))
+
+    for token in findTokens:
+        if not token.type == 'LINEBREAK':
+            print(token.type, "=>", token.value)

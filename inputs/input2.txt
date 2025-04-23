@@ -1,0 +1,9 @@
+(\vee 
+  (\neg 
+    (\wedge 01abc true)
+  ) 
+  (\rightarrow 
+    false 
+    123def
+  )
+)

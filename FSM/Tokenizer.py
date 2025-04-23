@@ -1,6 +1,6 @@
-from FiniteStateMachine import FiniteStateMachine
-from FiniteStateMachine import TokenizationError
-from Token import Token
+from FSM.FiniteStateMachine import FiniteStateMachine
+from FSM.FiniteStateMachine import TokenizationError
+from FSM.Token import Token
 
 
 class Tokenizer:
