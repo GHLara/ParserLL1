@@ -1,19 +1,25 @@
 import os
-from FSM import FSM
+from FSM.Tokenizer import Tokenizer
 
 
 def ReadFile(path: str):
-    fsm = FSM()
+    tokenizer = Tokenizer()
     with open(path, 'r') as file:
-        for line in file:
-            fsm.send(line)
+        for line_index, line in enumerate(file):
+            tokenizer.tokenize(line, line_index)
 
-    for token in fsm.token_list:
-        print("=>: ", token)
+    return tokenizer.tokens
 
 
 if __name__ == "__main__":
     path = "./inputs/"
     files = os.listdir(path)
-    for file in files:
-        ReadFile(os.path.join(path, file))
+    for index, file in enumerate(files):
+        print(f"[{index}]" f" ({file})")
+
+    fileIndex = input("Arquivo: ")
+    findTokens = ReadFile(os.path.join(path, files[int(fileIndex)]))
+
+    for token in findTokens:
+        if not token.type == 'LINEBREAK':
+            print(token.type, "=>", token.value)

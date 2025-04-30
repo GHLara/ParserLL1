@@ -1,0 +1,2 @@
+CIFRAO = "$"
+VAZIO = "ε"
