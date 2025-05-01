@@ -11,15 +11,25 @@ rules = {
             ["binaryFormula"]
         ]
     },
+    "formulaContainer": {
+        "rules": [
+            ["unaryFormula"],
+            ["binaryFormula"]
+        ]
+    },
+    "parentesesContainer": {
+        "rules": [
+            ["openParenteses", "formulaContainer", "closeParenteses"],
+        ]
+    },
     "unaryFormula": {
         "rules": [
-            ["openParenteses", "unaryOperator", "formula", "closeParenteses"]
+            ["unaryOperator", "formula"]
         ]
     },
     "binaryFormula": {
         "rules": [
-            ["openParenteses", "binaryOperator",
-                "formula", "formula", "closeParenteses"]
+            ["binaryOperator", "formula", "formula"]
         ]
     },
     "openParenteses": {
@@ -55,7 +65,8 @@ factory = GramaticsFactory()
 
 factory.newTerminals(['(', ')', 'neg', 'true', 'false', 'wedge',
                      'vee', 'rightarrow', 'leftrightarrow', 'propSymbol'])
-factory.newNonTerminals(['formula', 'unaryFormula', 'openParenteses', 'closeParenteses',
+
+factory.newNonTerminals(['formula','formulaContainer', 'parentesesContainer', 'unaryFormula', 'openParenteses', 'closeParenteses',
                          'unaryOperator', 'binaryOperator', 'constant', 'proposition', 'binaryFormula'], initial='formula')
 
 factory.newRules(rules)
