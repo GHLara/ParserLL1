@@ -1,31 +1,25 @@
-from Gramatics import Gramatics
-from GrammaticFactory import GramaticsFactory
-from constants import CIFRAO
-from LatexGrammar import LatexParser, LatexGrammar
-
 class Table:
 
-    def __init__(self, gramatic: Gramatics):
+    def __init__(self):
 
-        self.gramatic = gramatic
         self.table = {}
         self.rows = []
         self.columns = []
         self.max = 0
 
-    def mount(self):
+    def mount(self, parser, gramatic):
 
-        for terminal in self.gramatic.terminals.values():
+        for terminal in gramatic.terminals.values():
             self.columns.append(terminal.symbol.name)
 
         #Para cada não terminal
-        for nonTerminal in self.gramatic.nonTerminals.values():
+        for nonTerminal in gramatic.nonTerminals.values():
 
             self.rows.append(nonTerminal.symbol.name)
             self.table[nonTerminal.symbol.name] = {}
 
             #Para cada símbolo não terminal
-            for symbol in nonTerminal.first:
+            for symbol in parser.getFirst(nonTerminal.symbol.name):
 
                 #Para cada regra de produção
                 for production_list in nonTerminal.productions:
@@ -46,12 +40,13 @@ class Table:
                         elif symbol == production.symbol.name:
                             has_symbol = True
 
-                    print(rule)
-
                     if has_symbol:
                         self.table[nonTerminal.symbol.name][symbol] = rule
 
         self.showTable()
+    
+    def getRule(self, symbol1, symbol2):
+        return self.table[symbol1][symbol2]
 
     def showTable(self):
         
@@ -67,13 +62,3 @@ class Table:
                     valor = self.table.get(x, {}).get(y, 0)
                     f.write(f"{valor:>32}")
                 f.write("\n")
-
-
-table = Table(LatexGrammar)
-parser = LatexParser
-print(parser.getFirst('formula'))
-
-table.mount()
-
-for nonTerminal in table.gramatic.nonTerminals:
-    print(f"{nonTerminal} => First {parser.getFirst(nonTerminal)}")

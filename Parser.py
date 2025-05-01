@@ -1,11 +1,14 @@
 from Production import Production
 from Gramatics import Gramatics
+from Table import Table
 from constants import VAZIO, CIFRAO
 
 
 class Parser:
     def __init__(self, gramatic: Gramatics):
         self.gramatic = gramatic
+        self.table = Table()
+        self.mountTable()
 
     def defineFirst(self, initialProduction: Production):
         if len(initialProduction.productions) == 0:
@@ -40,23 +43,6 @@ class Parser:
         
         return self.defineFirst(production)
 
-    def getFollow(self, symbolStr):
-
-        production = self.gramatic.getProduction(symbolStr)
-        if (production == None):
-            print(f"Production rule not defined for {symbolStr}")
-            return None
-
-        if (production.symbol.isInitial):
-            if len(production.follow) == 0:
-                production.follow.append(CIFRAO)
-                return self.defineFollow(production)
-
-        if len(production.follow) > 0:
-            return production.follow
-
-        return self.defineFollow(production)
-
     def defineFollow(self, intial_production):
         # percorre todos os não terminais
         for rules in self.gramatic.nonTerminals.values():
@@ -83,5 +69,25 @@ class Parser:
 
         print(intial_production.follow)
         return intial_production.follow
+
+    def getFollow(self, symbolStr):
+
+        production = self.gramatic.getProduction(symbolStr)
+        if (production == None):
+            print(f"Production rule not defined for {symbolStr}")
+            return None
+
+        if (production.symbol.isInitial):
+            if len(production.follow) == 0:
+                production.follow.append(CIFRAO)
+                return self.defineFollow(production)
+
+        if len(production.follow) > 0:
+            return production.follow
+
+        return self.defineFollow(production)
+
+    def mountTable(self):
+        self.table.mount(self, self.gramatic)
 
 
