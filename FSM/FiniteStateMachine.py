@@ -1,10 +1,9 @@
-from FSM.Token import Token
-
-
 class State:
     NEW_TOKEN = "NEW_TOKEN"
     PROPOSITION = "PROPOSITION"
     COMMAND = "COMMAND"
+    UNARY = "UNARY_OPERATOR"
+    BINARY = "BINARY_OPERATOR"
     OPEN_PARENTHESES = "OPEN_PARENTHESES"
     CLOSE_PARENTHESES = "CLOSE_PARENTHESES"
     CONSTANT = "CONSTANT"
@@ -23,7 +22,8 @@ transition_table = {
 }
 
 keywords = ["false", "true"]
-commands = ["\\neg", "\\wedge", "\\vee", "\\rightarrow", "\\leftrightarrow"]
+unary = ["\\neg"]
+binary = ["\\wedge", "\\vee", "\\rightarrow", "\\leftrightarrow"]
 linebreak = [" ", "\n"]
 
 
@@ -36,7 +36,7 @@ class TokenizationError(Exception):
 
     def __str__(self):
         base = super().__str__()
-        return f"{base} (Expected: {self.expected}, Received: {self.token}, At: {self.column})"
+        return f"{base} (Expected: {self.expected}, Received: {self.token}, Coluna: {self.column})"
 
 
 class FiniteStateMachine:
@@ -153,7 +153,7 @@ class FiniteStateMachine:
 
                 type_char = self.getCharType(char)
 
-                if type_char == "alnum" or type_char == 'digit':
+                if type_char == "alnum" or type_char == 'digit' or type_char == "bool_start":
                     self.current_token += char
                     self.next_state = State.PROPOSITION
                 elif type_char == 'close_paren':
@@ -176,11 +176,35 @@ class FiniteStateMachine:
             elif self.current_state == State.COMMAND:
                 char = self.consumeChar()
                 found_prefix = False
+                isBinary = False
+                isUnary = False
 
-                for keyword in commands:
+                for keyword in binary:
+                    if keyword.startswith(self.current_token + char):
+                        isBinary = True
+                        break
+
+                for keyword in unary:
+                    if keyword.startswith(self.current_token + char):
+                        isUnary = True
+                        break
+
+                if isBinary:
+                    self.current_token += char
+                    self.next_state = State.BINARY
+
+                elif isUnary:
+                    self.current_token += char
+                    self.next_state = State.UNARY
+
+            elif self.current_state == State.BINARY:
+                char = self.consumeChar()
+                found_prefix = False
+
+                for keyword in binary:
                     if keyword.startswith(self.current_token):
                         self.current_token += char
-                        self.next_state = State.COMMAND
+                        self.next_state = State.BINARY
                         found_prefix = True
                         if self.current_token == keyword:
                             self.saveToken()
@@ -192,6 +216,33 @@ class FiniteStateMachine:
                         token=self.current_token,
                         expected=self.current_state
                     )
+
+            elif self.current_state == State.UNARY:
+                char = self.consumeChar()
+                found_prefix = False
+
+                for keyword in unary:
+                    if keyword.startswith(self.current_token):
+                        self.current_token += char
+                        self.next_state = State.UNARY
+                        found_prefix = True
+                        if self.current_token == keyword:
+                            self.saveToken()
+                        break
+                if not found_prefix:
+                    raise TokenizationError(
+                        "Token invalido identificado",
+                        column=self.getCharIndex(),
+                        token=self.current_token,
+                        expected=self.current_state
+                    )
+            else:
+                raise TokenizationError(
+                    "Token invalido identificado",
+                    column=self.getCharIndex(),
+                    token=self.current_token,
+                    expected='Token'
+                )
             self.current_state = self.next_state
         self.current_state = State.NEW_TOKEN
         return self.tokens

@@ -1,74 +1,77 @@
 from GrammaticFactory import GramaticsFactory
-from Parser import Parser
 
+# Rules deve ser um array.
+# Multiplos arrays dentro de Rules representam um OU
+# Valores dentro de cada array representam um E
+# A ou B = [['A']['B']]
+# A e B = [['A', 'B']]
 
 rules = {
-    "formula": {
+    "FORMULA": {
         "rules": [
-            ["constant"],
-            ["proposition"],
-            ["unaryFormula"],
-            ["binaryFormula"]
+            ["CONSTANT"],
+            ["PROPOSITION"],
+            ["PARENTHESES_CONTAINER"]
         ]
     },
-    "formulaContainer": {
+    "FORMULA_CONTAINER": {
         "rules": [
-            ["unaryFormula"],
-            ["binaryFormula"]
+            ["PARENTHESES_CONTAINER"],
+            ["UNARY_FORMULA"],
+            ["BINARY_FORMULA"]
         ]
     },
-    "parentesesContainer": {
+    "PARENTHESES_CONTAINER": {
         "rules": [
-            ["openParenteses", "formulaContainer", "closeParenteses"],
+            ["OPEN_PARENTHESES", "FORMULA_CONTAINER", "CLOSE_PARENTHESES"],
         ]
     },
-    "unaryFormula": {
+    "UNARY_FORMULA": {
         "rules": [
-            ["unaryOperator", "formula"]
+            ["UNARY_OPERATOR", "FORMULA"]
         ]
     },
-    "binaryFormula": {
+    "BINARY_FORMULA": {
         "rules": [
-            ["binaryOperator", "formula", "formula"]
+            ["BINARY_OPERATOR", "FORMULA", "FORMULA"]
         ]
     },
-    "openParenteses": {
+    "OPEN_PARENTHESES": {
         "rules": [["("]]
     },
-    "closeParenteses": {
+    "CLOSE_PARENTHESES": {
         "rules": [[")"]]
     },
-    "unaryOperator": {
-        "rules": [["neg"]]
+    "UNARY_OPERATOR": {
+        "rules": [["\\neg"]]
     },
-    "binaryOperator": {
+    "BINARY_OPERATOR": {
         "rules": [
-            ["wedge"],
-            ["vee"],
-            ["rightarrow"],
-            ["leftrightarrow"]
+            ["\\wedge"],
+            ["\\vee"],
+            ["\\rightarrow"],
+            ["\\leftrightarrow"]
         ]
     },
-    "constant": {
+    "CONSTANT": {
         "rules": [
             ["true"],
             ["false"]
         ]
     },
-    "proposition": {
-        "rules": [["propSymbol"]]
+    "PROPOSITION": {
+        "rules": [["PROP_SYMBOL"]]
     }
 }
 
 
 factory = GramaticsFactory()
 
-factory.newTerminals(['(', ')', 'neg', 'true', 'false', 'wedge',
-                     'vee', 'rightarrow', 'leftrightarrow', 'propSymbol'])
+factory.newTerminals(['(', ')', '\\neg', 'true', 'false', '\\wedge',
+                     '\\vee', '\\rightarrow', '\\leftrightarrow', 'PROP_SYMBOL'])
 
-factory.newNonTerminals(['formula','formulaContainer', 'parentesesContainer', 'unaryFormula', 'openParenteses', 'closeParenteses',
-                         'unaryOperator', 'binaryOperator', 'constant', 'proposition', 'binaryFormula'], initial='formula')
+factory.newNonTerminals(['FORMULA', 'FORMULA_CONTAINER', 'PARENTHESES_CONTAINER', 'UNARY_FORMULA', 'BINARY_FORMULA', 'OPEN_PARENTHESES', 'CLOSE_PARENTHESES',
+                         'UNARY_OPERATOR', 'BINARY_OPERATOR', 'CONSTANT', 'PROPOSITION'], initial='FORMULA')
 
 factory.newRules(rules)
 LatexGrammar = factory.getGrammar()
-LatexParser = Parser(gramatic=LatexGrammar)

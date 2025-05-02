@@ -1,10 +1,9 @@
-(\leftrightarrow 
-  (\vee 
-    (\neg 9x) 
-    true
+(\wedge 
+  (\rightarrow 
+    (\neg (\wedge 00a 11b)) 
+    (\vee 22x false)
   )
-  (\wedge 
-    (\neg 77z) 
-    (\rightarrow 5a (\neg false))
+  (\neg 
+    (\rightarrow true (\neg 88c))
   )
 )

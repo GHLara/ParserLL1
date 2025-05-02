@@ -9,6 +9,9 @@ class Gramatics:
         self.terminals: Dict[str, Production] = {}
         self.nonTerminals: Dict[str, Production] = {}
 
+    def setInitial(self, initial):
+        self.initial = initial
+
     def Terminal(self, name: str) -> Production:
         sym = Symbol(name, isTerminal=True)
         self.terminals[name] = Production(sym)
@@ -35,18 +38,3 @@ class Gramatics:
             return self.nonTerminals[name]
         else:
             return None
-
-
-# gramatics.getNonTerminal('formula').showRules()
-# gramatics.getNonTerminal('constant').showRules()
-# gramatics.getNonTerminal('proposition').showRules()
-# gramatics.getNonTerminal('unaryFormula').showRules()
-# gramatics.getNonTerminal('binaryFormula').showRules()
-# gramatics.getNonTerminal('openParenteses').showRules()
-# gramatics.getNonTerminal('closeParenteses').showRules()
-# gramatics.getNonTerminal('unaryOperator').showRules()
-# gramatics.getNonTerminal('binaryOperator').showRules()
-
-# gramatics.showNonTerminals()
-
-# print(gramatics.getNonTerminal('formula').getFirst())

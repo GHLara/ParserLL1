@@ -1,9 +1,10 @@
-(\vee 
-  (\neg 
-    (\wedge 01abc true)
-  ) 
-  (\rightarrow 
-    false 
-    123def
+(\leftrightarrow 
+  (\vee 
+    (\neg 9x) 
+    true
+  )
+  (\wedge 
+    (\neg 77z) 
+    (\rightarrow 5a (\neg false))
   )
 )

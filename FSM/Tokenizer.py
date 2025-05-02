@@ -1,3 +1,4 @@
+import sys
 from FSM.FiniteStateMachine import FiniteStateMachine
 from FSM.FiniteStateMachine import TokenizationError
 from FSM.Token import Token
@@ -21,7 +22,11 @@ class Tokenizer:
                 self.tokens.append(tokenObj)
 
         except TokenizationError as e:
-            print(f"Erro encontrado na linha {line} coluna {e.column}")
-            print(f"Expected: {e.expected}")
-            print(" "*4, input_string.strip())
-            print(" "*4, " "*(e.column - 2), "^")
+            print(f'Erro sintático: linha {line} coluna {e.column}')
+            print(f"Token não identificado: '{input_string.strip()}'",)
+            sys.exit(1)
+
+    def readFile(self, path):
+        with open(path, 'r') as file:
+            for line_index, line in enumerate(file):
+                self.tokenize(line, line_index)
