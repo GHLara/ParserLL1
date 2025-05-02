@@ -14,9 +14,16 @@ if __name__ == "__main__":
     filePath = os.path.join(path, files[int(fileIndex)])
 
     #Vamos extrair os tokens do arquivo
-    tokenizer = Tokenizer()
-    tokenizer.readFile(filePath)
+    LatexParser = Parser(gramatic=LatexGrammar)
 
-    #Agora, podemos chamar nosso Parser, passando nossa gramática e nossos tokens.
-    LatexParser = Parser(gramatic=LatexGrammar, tokens=tokenizer.tokens)
-    LatexParser.view()
+    tokenizer = Tokenizer()
+    lines = tokenizer.readFile(filePath)
+    for index, line in enumerate(lines):
+        if(index > 0 and line.strip() != ""):        
+            try:
+                tokens = tokenizer.tokenize(line, index)
+                LatexParser.parse(tokens)
+                print(''.join([x.value for x in tokens if x.value != '\n']), '-> Válido')
+            except Exception as e:
+                print(line.replace('\n', ''), '-> Inválido')
+

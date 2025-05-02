@@ -1,0 +1,9 @@
+5
+\neg true
+( \vee true false )
+( \neg 3p1 )
+( \neg )
+( \wedge 2p1 )
+true
+1ab
+true 1ab

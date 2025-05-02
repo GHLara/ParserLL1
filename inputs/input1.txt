@@ -1,9 +1,6 @@
-(\vee 
-  (\neg 
-    (\wedge 01abc true)
-  ) 
-  (\rightarrow 
-    false 
-    123def
-  )
-)
+5
+( \neg ( \neg p2 ) )
+( \rightarrow true false )
+true
+( p1 )
+( \neg \vee true false )

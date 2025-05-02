@@ -1,4 +1,0 @@
-(\and 
-  true 
-  (\neg 3x)
-)
