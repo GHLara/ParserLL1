@@ -1,9 +1,6 @@
-(\wedge 
-  (\rightarrow 
-    (\neg (\wedge 00a 11b)) 
-    (\vee 22x false)
-  )
-  (\neg 
-    (\rightarrow true (\neg 88c))
-  )
-)
+5
+\neg p1
+( \neg ( \rightarrow p1 p2 ) )
+( \wedge p3 p4 )
+false
+( \neg \rightarrow p1 p2 )

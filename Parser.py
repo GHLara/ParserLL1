@@ -1,87 +1,49 @@
-from Production import Production
 from Gramatics import Gramatics
-from constants import VAZIO, CIFRAO
+from Table import Table
+from FSM.Token import Token
 
+class ParsingError(Exception):
+    def __init__(self, message, expected=None):
+        super().__init__(message)
+        self.expected = expected
+        
+    def __str__(self):
+        base = super().__str__()
+        return f"{base} (Expected: {self.expected})"
 
 class Parser:
     def __init__(self, gramatic: Gramatics):
         self.gramatic = gramatic
+        self.table = Table(gramatic)
 
-    def defineFirst(self, initialProduction: Production):
-        if len(initialProduction.productions) == 0:
-            if (initialProduction.symbol.isTerminal):
-                print(
-                    f"Terminal symbol '{initialProduction.symbol.name}' has not first")
-            else:
-                print(
-                    f"Production rules not defined for: {initialProduction.symbol.name}")
-            return []
+    def parse(self, input: list[Token]):
 
-        for rule in initialProduction.productions:
-            for production in rule:
-                if production.symbol.isTerminal:
-                    if production.symbol.name not in initialProduction.first:
-                        initialProduction.first.append(production.symbol.name)
-                    break
+        stack = [self.gramatic.initial, "$"]
 
-                else:
-                    for symbol in self.getFirst(production.symbol.name):
-                        if symbol not in initialProduction.first:
-                            initialProduction.first.append(symbol)
-                    break
-
-        return initialProduction.first
-
-    def getFirst(self, symbolStr):
-        production = self.gramatic.getProduction(symbolStr)
-
-        if len(production.first) > 0:
-            return production.first
+        # Filtra os tokens que não são quebras de linha e espaços vazios
+        input = [x for x in input if x.type != 'LINEBREAK']
         
-        return self.defineFirst(production)
+        while stack[0] != "$" and len(input) > 0:
+            stackVal = stack.pop(0)
+            inputType = input[0].type
+            inputChar = input[0].value
+            
+            #Encontrou o simbolo terminal na árvore
+            if stackVal == inputChar or (inputType == 'PROPOSITION' and stackVal == 'PROP_SYMBOL'):
+                input.pop(0)
+                continue
 
-    def getFollow(self, symbolStr):
+            if inputType == 'PROPOSITION':
+                rule = self.table.getRule(stackVal, 'PROP_SYMBOL')
+            else:
+                rule = self.table.getRule(stackVal, inputChar)
 
-        production = self.gramatic.getProduction(symbolStr)
-        if (production == None):
-            print(f"Production rule not defined for {symbolStr}")
-            return None
+            if rule == None:
+                raise ParsingError('Erro semântico', expected=stackVal)
 
-        if (production.symbol.isInitial):
-            if len(production.follow) == 0:
-                production.follow.append(CIFRAO)
-                return self.defineFollow(production)
+            for x in reversed(rule):
+                stack.insert(0, x)
 
-        if len(production.follow) > 0:
-            return production.follow
-
-        return self.defineFollow(production)
-
-    def defineFollow(self, intial_production):
-        # percorre todos os não terminais
-        for rules in self.gramatic.nonTerminals.values():
-            # percorre todas as regras do não terminal
-            for rule in rules.productions:
-                production_index = 0
-                # percorre cada elemento de cada regra
-                for production in rule:
-                    production_index += 1
-
-                    if production.symbol.name == intial_production.symbol.name:
-
-                        if (production_index < len(rule)):
-                            for follow_symbol in self.getFirst(rule[production_index].symbol.name):
-                                if (follow_symbol not in intial_production.follow):
-                                    intial_production.follow.append(
-                                        follow_symbol)
-
-                        else:
-                            for follow_symbol in self.getFollow(rules.symbol.name):
-                                if (follow_symbol not in intial_production.follow):
-                                    intial_production.follow.append(
-                                        follow_symbol)
-
-        print(intial_production.follow)
-        return intial_production.follow
-
+        if len(stack) > 1 or len(input) > 0:
+            raise ParsingError('Erro semântico', expected=stackVal)
 

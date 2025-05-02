@@ -1,6 +1,0 @@
-(\neg 
-  (\vee 
-    truue 
-    (\wedge 00a 11b)
-  )
-)

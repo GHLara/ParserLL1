@@ -1,0 +1,6 @@
+5
+( \neg ( \neg p2 ) )
+( \rightarrow true false )
+true
+( p1 )
+( \neg \vee true false )

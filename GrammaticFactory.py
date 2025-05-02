@@ -8,7 +8,8 @@ class GramaticsFactory:
         for terminal in terminals:
             self.grammar.Terminal(terminal)
 
-    def newNonTerminals(self, nonTerminals: list[str], initial=str):
+    def newNonTerminals(self, nonTerminals: list[str], initial: str):
+        self.grammar.setInitial(initial)
         for nonTerminal in nonTerminals:
             self.grammar.NonTerminal(nonTerminal, nonTerminal == initial)
 

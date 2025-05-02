@@ -1,7 +1,0 @@
-(\leftrightarrow 
-  (\neg 123!abc)
-  (\wedge 
-    false 
-    4g
-  )
-)
